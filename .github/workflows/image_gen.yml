@@ -22,8 +22,8 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/<OIDC_ROLE_NAME>
+          role-to-assume: arn:aws:iam::838661220488:role/test_1
           aws-region: us-east-1
 
       - name: Run Claude skill
-        run: claude -p ${{ github.event.inputs.skill_file }}
+        run: claude -p skill.md
