@@ -11,8 +11,8 @@ RUN pip install anthropic
 
 
 # Copy project dependencies if needed
-COPY claude /usr/local/bin/claude
-RUN chmod +x /usr/local/bin/claude
+COPY claude.py /usr/local/bin/claude.py
+RUN chmod +x /usr/local/bin/claude.py
 
 
 
