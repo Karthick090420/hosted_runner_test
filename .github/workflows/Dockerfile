@@ -1,25 +1,19 @@
-# Use official Python base image
 FROM python:3.11-slim
 
-# Install system dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
-    git \
+    curl unzip groff less \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install anthropic
+# Install AWS CLI v2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf awscliv2.zip aws
 
-
-# Copy project dependencies if needed
-# Copy CLI wrapper from workflows folder
+# Copy your claude wrapper
 COPY .github/workflows/claude /usr/local/bin/claude
 RUN chmod +x /usr/local/bin/claude
 
-
-
-
-# Set working directory
-WORKDIR /app
-
-# Default command (can be overridden in workflow)
-CMD ["python3"]
+# Install Python packages if needed
+RUN pip install --no-cache-dir boto3
