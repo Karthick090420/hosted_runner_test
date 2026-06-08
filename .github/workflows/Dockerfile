@@ -11,8 +11,10 @@ RUN pip install anthropic
 
 
 # Copy project dependencies if needed
-COPY claude /usr/local/bin/claude.
+# Copy CLI wrapper from workflows folder
+COPY .github/workflows/claude /usr/local/bin/claude
 RUN chmod +x /usr/local/bin/claude
+
 
 
 
