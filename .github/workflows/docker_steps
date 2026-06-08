@@ -1,0 +1,36 @@
+name: CICD Pipeline
+
+on:
+  workflow_dispatch
+
+env:
+  ECR_REPO: test
+  ECR_ACCOUNT: "838661220488"
+  AWS_REGION: us-east-1
+
+jobs:
+   steps:
+     runs-on: ubuntu-22.04
+    
+     - name: Checkout
+       uses: actions/checkout@v2
+
+
+    - name: Configure AWS Credential
+      uses: aws-actions/configure-aws-credential@v4
+      with:
+          role-to-assume: ${{secrets.OIDC_ARN}}
+
+    - name: Docker Build
+      if: ${{ env.ECR_REPO && env.ECR_ACCOUNT && env.AWS_REGION }} 
+      run: docker-build ECR_ACCOUNT=${{ env.ECR_ACCOUNT }} AWS_REGION=${{ env.AWS_REGION }} ECR_REPO=${{ env.ECR_REPO }}
+     
+    - name: Authenticate the AWS ECR
+      uses: aws-actions/amazon-ecr-login
+
+    - name: Docker push
+      if: ${{ env.ECR_REPO && env.ECR_ACCOUNT && env.AWS_REGION }} 
+      run: docker-push ECR_ACCOUNT=${{ env.ECR_ACCOUNT }} AWS_REGION=${{ env.AWS_REGION }} ECR_REPO=${{ env.ECR_REPO }}
+   
+    
+      
