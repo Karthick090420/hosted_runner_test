@@ -11,6 +11,11 @@ env:
 jobs:
    build:
        runs-on: ubuntu-22.04
+
+       permissions:
+        id-token: write
+        contents: read
+  
        steps:
        - name: Checkout
          uses: actions/checkout@v2
@@ -20,13 +25,14 @@ jobs:
          uses: aws-actions/configure-aws-credentials@v4
          with:
             role-to-assume: ${{secrets.OIDC_ARN}}
+            aws-region: ${{ env.AWS_REGION }}
   
        - name: Docker Build
          if: ${{ env.ECR_REPO && env.ECR_ACCOUNT && env.AWS_REGION }} 
          run: docker-build ECR_ACCOUNT=${{ env.ECR_ACCOUNT }} AWS_REGION=${{ env.AWS_REGION }} ECR_REPO=${{ env.ECR_REPO }}
        
        - name: Authenticate the AWS ECR
-         uses: uses: aws-actions/amazon-ecr-login@v2
+         uses: aws-actions/amazon-ecr-login@v2
    
        - name: Docker push
          if: ${{ env.ECR_REPO && env.ECR_ACCOUNT && env.AWS_REGION }} 
