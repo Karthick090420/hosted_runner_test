@@ -14,8 +14,9 @@ RUN pip install --no-cache-dir claude-cli
 RUN pip install --no-cache-dir claude-skill
 
 # Copy project dependencies if needed
-COPY requirements.txt .
+COPY .github/workflows/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
 
 # Set working directory
 WORKDIR /app
