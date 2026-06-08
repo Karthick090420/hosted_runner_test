@@ -27,16 +27,17 @@ jobs:
             role-to-assume: ${{secrets.OIDC_ARN}}
             aws-region: ${{ env.AWS_REGION }}
   
-       - name: Docker Build
-         if: ${{ env.ECR_REPO && env.ECR_ACCOUNT && env.AWS_REGION }} 
-         run: docker build ECR_ACCOUNT=${{ env.ECR_ACCOUNT }} AWS_REGION=${{ env.AWS_REGION }} ECR_REPO=${{ env.ECR_REPO }} .
-       
-       - name: Authenticate the AWS ECR
+       - name: Authenticate AWS ECR
          uses: aws-actions/amazon-ecr-login@v2
-   
-       - name: Docker push
-         if: ${{ env.ECR_REPO && env.ECR_ACCOUNT && env.AWS_REGION }} 
-         run: docker push ECR_ACCOUNT=${{ env.ECR_ACCOUNT }} AWS_REGION=${{ env.AWS_REGION }} ECR_REPO=${{ env.ECR_REPO }}
+
+       - name: Build Docker image
+         run: docker build -t $ECR_REPO .
+
+       - name: Tag Docker image
+         run: docker tag $ECR_REPO:latest $ECR_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
+
+       - name: Push Docker image
+         run: docker push $ECR_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
      
       
         
