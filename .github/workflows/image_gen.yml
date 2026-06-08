@@ -11,11 +11,11 @@ on:
 jobs:
   run-claude:
     runs-on: ubuntu-latest
-    container:
-      image: 838661220488.dkr.ecr.us-east-1.amazonaws.com/test:latest
+
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -25,5 +25,17 @@ jobs:
           role-to-assume: arn:aws:iam::838661220488:role/test_1
           aws-region: us-east-1
 
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 \
+            | docker login --username AWS --password-stdin 838661220488.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Pull Claude image
+        run: docker pull 838661220488.dkr.ecr.us-east-1.amazonaws.com/test:latest
+
       - name: Run Claude skill
-        run: claude -p skill.md
+        run: |
+          docker run --rm \
+            -v $GITHUB_WORKSPACE:/app \
+            838661220488.dkr.ecr.us-east-1.amazonaws.com/test:latest \
+            claude -p ${{ github.event.inputs.skill_file }}
