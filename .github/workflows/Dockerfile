@@ -7,15 +7,13 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Claude CLI (replace with actual install steps if different)
-RUN pip install --no-cache-dir claude-cli
+RUN pip install anthropic
 
-# Install claude-skill command (assuming it's a Python package)
-RUN pip install --no-cache-dir claude-skill
 
 # Copy project dependencies if needed
-COPY .github/workflows/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY claude /usr/local/bin/claude
+RUN chmod +x /usr/local/bin/claude
+
 
 
 # Set working directory
