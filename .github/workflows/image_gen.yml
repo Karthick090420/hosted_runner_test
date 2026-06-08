@@ -1,0 +1,29 @@
+name: Run Claude Skill
+
+on:
+  workflow_dispatch:
+    inputs:
+      skill_file:
+        description: "Skill file to run"
+        default: "skill.md"
+        required: true
+
+jobs:
+  run-claude:
+    runs-on: ubuntu-latest
+    container:
+      image: 838661220488.dkr.ecr.us-east-1.amazonaws.com/test:latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/<OIDC_ROLE_NAME>
+          aws-region: us-east-1
+
+      - name: Run Claude skill
+        run: claude -p ${{ github.event.inputs.skill_file }}
